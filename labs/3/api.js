@@ -1,6 +1,6 @@
 const http = require("http");
 const url = require("url");
-const fs = require("fs");
+const fs = require("fs").promises;
 const dt = require("../../modules/utils");
 const messageData = require("../../lang/en/en.json");
 const path = require("path");
@@ -33,7 +33,7 @@ const writeFile = async (req, res) => {
 
 
 const readFile = async (req, res) => {
-    const { pathname } = url.parse(req.res, true)
+    const { pathname } = url.parse(req.url, true)
     const filename = path.basename(pathname)
     const data = await FileHandler.readFile(filename)
     res.writeHead(data ? 200 : 404, { "content-type": "text/plain" });
