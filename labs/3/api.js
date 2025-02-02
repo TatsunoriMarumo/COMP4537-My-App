@@ -1,6 +1,6 @@
 const http = require("http");
 const url = require("url")
-const dt = require("./modules/utils")
+const dt = require("../../modules/utils")
 const messageData = require("../../lang/en/en.json")
 
 
