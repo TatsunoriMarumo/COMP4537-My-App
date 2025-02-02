@@ -18,10 +18,10 @@ const getDate = (req, res) => {
 
 const writeFile = async (req, res) => {
   const { query } = url.parse(req.url, true);
-  const text = query.name;
+  const text = query.text;
   if (!text) {
     res.writeHead(400, { "content-type": "text/plain" });
-    res.end("Missing 'name' parameter");
+    res.end("Missing 'text' parameter");
     return;
   }
   const success = await FileHandler.appendFile("file.txt", text);
