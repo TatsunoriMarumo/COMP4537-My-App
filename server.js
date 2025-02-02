@@ -1,6 +1,7 @@
 const http = require("http");
 const url = require("url");
 const { getDate, writeFile, readFile } = require("./labs/3/api");
+const messageData = require("./lang/en/en.json")
 
 const PORT = process.env.PORT || 8888;
 
@@ -23,7 +24,7 @@ http
 
       default:
         res.writeHead(404, { "content-type": "text/plain" });
-        res.end("404 Not Found");
+        res.end(messageData.errorPageNotFound);
     }
   })
   .listen(PORT);

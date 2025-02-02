@@ -1,4 +1,3 @@
-const http = require("http");
 const url = require("url");
 const fs = require("fs").promises;
 const dt = require("../../modules/utils");
@@ -8,7 +7,7 @@ const path = require("path");
 const getDate = (req, res) => {
   const { query } = url.parse(req.url, true);
   const name = query.name || "Guest";
-  const message = messageData.message;
+  const message = messageData.helloMessage;
   const serverTime = dt.myDateTime();
   const formattedMessage = message.replace("%1", name) + ` ${serverTime}`;
 
@@ -21,13 +20,13 @@ const writeFile = async (req, res) => {
   const text = query.text;
   if (!text) {
     res.writeHead(400, { "content-type": "text/plain" });
-    res.end("Missing 'text' parameter");
+    res.end(messageData.errorMissingText);
     return;
   }
   const success = await FileHandler.appendFile("file.txt", text);
   res.writeHead(success ? 200 : 500, { "content-type": "text/plain" });
   res.end(
-    success ? "Text successfully appended to file." : "Error writing to file."
+    success ? messageData.successWriteFile : messageData.errorWriteFile
   );
 };
 
@@ -38,7 +37,7 @@ const readFile = async (req, res) => {
     const data = await FileHandler.readFile(filename)
     res.writeHead(data ? 200 : 404, { "content-type": "text/plain" });
     res.end(
-        data ? data : "404 File Not Found."
+        data ? data : messageData.errorFileNotFound
     )
 }
 
