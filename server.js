@@ -13,7 +13,7 @@ http.createServer((req, res) => {
         return
     }
 
-    if (pathname === "/COMP4537/labs/writeFile") {
+    if (pathname === "/COMP4537/labs/3/writeFile") {
         writeFile(req, res)
         return
     }
