@@ -9,7 +9,7 @@ const lab3 = ((req, res) => {
     const name = q.query.name || "Guest"
     const message = messageData.message;
     const serverTime = dt.myDateTime();
-    const formattedMessage = message.replace("%1", name) + `${serverTime}`
+    const formattedMessage = message.replace("%1", name) + ` ${serverTime}`
 
 
 
