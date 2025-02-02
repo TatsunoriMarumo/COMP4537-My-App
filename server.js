@@ -1,6 +1,6 @@
 const http = require("http");
 const url = require("url");
-const { lab3 } = require("./labs/3/api")
+const { getDate, writeFile } = require("./labs/3/api")
 
 const PORT = process.env.PORT || 8888
 
@@ -9,7 +9,12 @@ http.createServer((req, res) => {
     const pathname = q.pathname
 
     if (pathname === "/COMP4537/labs/3/getDate") {
-        lab3(req, res)
+        getDate(req, res)
+        return
+    }
+
+    if (pathname === "/COMP4537/labs/writeWhile") {
+        writeFile(req, res)
         return
     }
 }).listen(PORT)
