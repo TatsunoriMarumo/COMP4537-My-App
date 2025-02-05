@@ -11,7 +11,10 @@ const getDate = (req, res) => {
   const serverTime = dt.myDateTime();
   const formattedMessage = message.replace("%1", name) + ` ${serverTime}`;
 
-  res.writeHead(200, { "Content-type": "text/html" });
+  res.writeHead(200, {
+    "Content-type": "text/html",
+    "Access-Control-Allow-Origin": "*",
+  });
   res.end(`<p style="color: blue; font-size: 18px;">${formattedMessage}</p>`);
 };
 
