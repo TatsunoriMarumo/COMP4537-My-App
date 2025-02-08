@@ -1,8 +1,3 @@
 {
-    "errorPageNotFound": "404 Page Not Found.",
-    "helloMessage": "Hello %1, What a beautiful day. Server current date and time is",
-    "errorMissingText": "Missing 'text' parameter",
-    "errorWriteFile": "Error writing to file.",
-    "successWriteFile": "Text successfully appended to file.",
-    "errorFileNotFound": "404 File Not Found."
+    "errorPageNotFound": "404 Page Not Found."
 }

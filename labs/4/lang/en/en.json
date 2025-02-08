@@ -1,0 +1,8 @@
+{
+    "errorMissingWord": "Missing word parameter",
+    "internalServerError": "500 Internal Server Error",
+    "wordAlreadyExists": "'%1' already exists in the dictionary.",
+    "wordStoredSuccessfully": "'%1' was successfully stored in the dictionary.",
+    "invalidJson": "Invalid JSON",
+    "invalidInput": "Error: Invalid Input"
+}

@@ -1,7 +1,7 @@
 const url = require("url");
 const fs = require("fs").promises;
 const dt = require("../../modules/utils");
-const messageData = require("../../lang/en/en.json");
+const messageData = require("./lang/en/en.json");
 const path = require("path");
 
 const getDate = (req, res) => {
@@ -13,7 +13,6 @@ const getDate = (req, res) => {
 
   res.writeHead(200, {
     "Content-type": "text/html",
-    "Access-Control-Allow-Origin": "*",
   });
   res.end(`<p style="color: blue; font-size: 18px;">${formattedMessage}</p>`);
 };

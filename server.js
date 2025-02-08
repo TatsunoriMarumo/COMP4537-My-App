@@ -1,26 +1,32 @@
 const http = require("http");
 const url = require("url");
 const { getDate, writeFile, readFile } = require("./labs/3/api");
-const messageData = require("./lang/en/en.json")
+const { handleRequest } = require("./labs/4/app");
+const messageData = require("./lang/en/en.json");
 
 const PORT = process.env.PORT || 8888;
 
-const base_url = "/COMP4537/labs"
-const lab3_url = `${base_url}/3`
+const BASE_URL = "/COMP4537/labs";
+const LAB3_URL = `${BASE_URL}/3`;
+const LAB4_URL = `${BASE_URL}/4`;
 
 http
   .createServer((req, res) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
     const { pathname } = url.parse(req.url, true);
 
     switch (true) {
-      case pathname.startsWith(`${lab3_url}/getDate`):
+      case pathname.startsWith(`${LAB3_URL}/getDate`):
         return getDate(req, res);
 
-      case pathname.startsWith(`${lab3_url}/writeFile`):
+      case pathname.startsWith(`${LAB3_URL}/writeFile`):
         return writeFile(req, res);
 
-      case pathname.startsWith(`${lab3_url}/readFile`):
+      case pathname.startsWith(`${LAB3_URL}/readFile`):
         return readFile(req, res);
+
+      case pathname.startsWith(`${LAB4_URL}/api/definitions`):
+        return handleRequest(req, res);
 
       default:
         res.writeHead(404, { "content-type": "text/plain" });
