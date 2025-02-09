@@ -39,13 +39,10 @@ class Dictionary {
         const definition = this.dictionary[formattedWord];
         const response = {
           status: "success",
-          data: {
-            word: formattedWord,
-            definition: definition,
-            numberOfRequests: this.numberOfRequests,
-            totalEntries: Object.keys(this.dictionary).length,
-            lastUpdated: this.lastUpdated,
-          },
+          message: definition,
+          numberOfRequests: this.numberOfRequests,
+          totalEntries: Object.keys(this.dictionary).length,
+          lastUpdated: this.lastUpdated,
         };
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(JSON.stringify(response));
@@ -140,7 +137,7 @@ class Dictionary {
 
   handleBadRequest(res, errorMessage) {
     res.writeHead(400, { "Content-Type": "application/json" });
-    res.end(JSON.stringify({ error: errorMessage }));
+    res.end(JSON.stringify({ status: "error", message: errorMessage }));
   }
 }
 
