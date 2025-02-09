@@ -1,6 +1,5 @@
 const url = require("url");
 const messageData = require("./lang/en/en.json");
-const { error } = require("console");
 
 class Dictionary {
   constructor() {
@@ -9,37 +8,60 @@ class Dictionary {
     this.lastUpdated = new Date().toString();
   }
 
+  isValidFormat(str) {
+    return typeof str === "string" && str.trim() !== "";
+  }
+
+  formatWord(word) {
+    if (typeof word === "string") {
+      return word.trim().toLowerCase();
+    }
+    return "";
+  }
+
   isWordInDictionary(word) {
-    return this.dictionary.hasOwnProperty(word);
+    return Object.prototype.hasOwnProperty.call(this.dictionary, word);
   }
 
   searchWord(req, res) {
     try {
       const { query } = url.parse(req.url, true);
-      const word = this.formatWord(query.word);
-      if (!word) {
-        this.handleBadRequest(res);
-        return;
-      }
-      const definition = this.isWordInDictionary(word)
-        ? this.dictionary[word]
-        : undefined;
+      const word = query.word;
 
+      if (!word || !this.isValidFormat(word)) {
+        return this.handleBadRequest(res, messageData.errorMissingWord);
+      }
+
+      const formattedWord = this.formatWord(word);
       this.numberOfRequests += 1;
 
-      const response = {
-        status: "success",
-        data: {
-          word: word,
-          definition: definition,
+      if (this.isWordInDictionary(formattedWord)) {
+        const definition = this.dictionary[formattedWord];
+        const response = {
+          status: "success",
+          data: {
+            word: formattedWord,
+            definition: definition,
+            numberOfRequests: this.numberOfRequests,
+            totalEntries: Object.keys(this.dictionary).length,
+            lastUpdated: this.lastUpdated,
+          },
+        };
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify(response));
+      } else {
+        const response = {
+          status: "error",
+          message: messageData.wordNotFound
+            .replace("%1", this.numberOfRequests)
+            .replace("%2", formattedWord),
           numberOfRequests: this.numberOfRequests,
-          lastUpdated: this.lastUpdated,
-        },
-      };
-
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(JSON.stringify(response));
-    } catch (error) {
+          totalEntries: Object.keys(this.dictionary).length,
+        };
+        res.writeHead(404, { "Content-Type": "application/json" });
+        res.end(JSON.stringify(response));
+      }
+    } catch (err) {
       res.writeHead(500, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ error: messageData.internalServerError }));
     }
@@ -48,16 +70,19 @@ class Dictionary {
   storeWord(req, res) {
     let body = "";
     req.on("data", (chunk) => {
-      if (chunk) {
-        body += chunk;
-      }
+      body += chunk;
     });
     req.on("end", () => {
       try {
         const data = JSON.parse(body);
-        const word = this.formatWord(data.word);
+        const word = data.word;
+        const definition = data.definition;
 
-        if (!word || typeof data.definition !== "string") {
+        if (
+          !word ||
+          !this.isValidFormat(word) ||
+          !this.isValidFormat(definition)
+        ) {
           res.writeHead(400, { "Content-Type": "application/json" });
           res.end(
             JSON.stringify({
@@ -68,32 +93,44 @@ class Dictionary {
           return;
         }
 
-        const definition = data.definition.trim();
+        const formattedWord = this.formatWord(word);
+        const formattedDefinition = definition.trim();
 
-        if (this.isWordInDictionary(word)) {
+        if (this.isWordInDictionary(formattedWord)) {
           res.writeHead(409, { "Content-Type": "application/json" });
           res.end(
             JSON.stringify({
               status: "error",
-              message: messageData.wordAlreadyExists.replace("%1", word),
+              message: messageData.wordAlreadyExists.replace(
+                "%1",
+                formattedWord
+              ),
+              numberOfRequests: this.numberOfRequests,
+              totalEntries: Object.keys(this.dictionary).length,
             })
           );
           return;
         }
 
-        this.dictionary[word] = definition;
+        this.dictionary[formattedWord] = formattedDefinition;
         this.numberOfRequests += 1;
         this.lastUpdated = new Date().toString();
 
-        res.writeHead(200, { "Content-type": "application/json" });
+        res.writeHead(200, { "Content-Type": "application/json" });
         res.end(
           JSON.stringify({
             status: "success",
-            message: messageData.wordStoredSuccessfully.replace("%1", word),
+            message: messageData.wordStoredSuccessfully.replace(
+              "%1",
+              formattedWord
+            ),
+            numberOfRequests: this.numberOfRequests,
+            totalEntries: Object.keys(this.dictionary).length,
+            lastUpdated: this.lastUpdated,
           })
         );
-      } catch (error) {
-        res.writeHead(400);
+      } catch (err) {
+        res.writeHead(400, { "Content-Type": "application/json" });
         res.end(
           JSON.stringify({ status: "error", message: messageData.invalidJson })
         );
@@ -101,17 +138,9 @@ class Dictionary {
     });
   }
 
-  formatWord(word) {
-    if (word && typeof word === "string") {
-      return word.trim().toLowerCase();
-    }
-  }
-
-  handleBadRequest(res) {
-    res.writeHead(400, {
-      "Content-Type": "text/html",
-    });
-    res.end(JSON.stringify({ error: messageData.errorMissingWord }));
+  handleBadRequest(res, errorMessage) {
+    res.writeHead(400, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({ error: errorMessage }));
   }
 }
 
