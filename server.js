@@ -41,7 +41,7 @@ http
         return handleRequest(req, res);
 
       case pathname.startsWith(`${LAB5_URL}/api/v1/sql`):
-        return handleRequest(req, res);
+        return handleDatabaseRequest(req, res);
 
       default:
         res.writeHead(404, { "content-type": "text/plain" });
