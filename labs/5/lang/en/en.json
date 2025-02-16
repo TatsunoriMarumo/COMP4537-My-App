@@ -1,0 +1,9 @@
+{
+    "errorMissingQuery": "Missing query parameter.",
+    "internalServerError": "Internal Server Error",
+    "patientStoredSuccessfully": "Patient successfully stored.",
+    "invalidJson": "Invalid JSON format.",
+    "onlySelectAllowed": "Only SELECT queries are allowed for GET requests.",
+    "onlyInsertAllowed": "Only INSERT queries are allowed for POST requests.",
+    "methodNotAllowed": "Method not allowed."
+}

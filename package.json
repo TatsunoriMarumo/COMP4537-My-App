@@ -17,5 +17,9 @@
     "url": "https://github.com/TatsunoriMarumo/COMP4537-My-App/issues"
   },
   "homepage": "https://github.com/TatsunoriMarumo/COMP4537-My-App#readme",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "mysql": "^2.18.1"
+  }
 }

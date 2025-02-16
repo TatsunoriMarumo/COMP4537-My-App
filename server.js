@@ -9,6 +9,7 @@ const PORT = process.env.PORT || 8888;
 const BASE_URL = "/COMP4537/labs";
 const LAB3_URL = `${BASE_URL}/3`;
 const LAB4_URL = `${BASE_URL}/4`;
+const LAB5_URL = `${BASE_URL}/5`;
 
 http
   .createServer((req, res) => {
@@ -36,6 +37,9 @@ http
         return readFile(req, res);
 
       case pathname.startsWith(`${LAB4_URL}/api/definitions`):
+        return handleRequest(req, res);
+
+      case pathname.startsWith(`${LAB5_URL}/api/v1/sql`):
         return handleRequest(req, res);
 
       default:
