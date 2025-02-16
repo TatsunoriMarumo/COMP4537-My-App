@@ -1,4 +1,4 @@
-const mysql = require("mysql");
+const mysql = require("mysql2");
 const path = require('path');
 const fs = require("fs");
 require('dotenv').config({ path: path.resolve(__dirname, '.env') });
