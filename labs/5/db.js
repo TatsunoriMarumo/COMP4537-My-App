@@ -1,6 +1,12 @@
 const mysql = require("mysql");
 const path = require('path');
+const fs = require("fs");
 require('dotenv').config({ path: path.resolve(__dirname, '.env') });
+
+const caCertificate = fs.readFileSync(
+  path.resolve(__dirname, "ca-certificate.crt"),
+  "utf8"
+);
 
 const dbConfig = {
     host: process.env.host,
@@ -8,6 +14,9 @@ const dbConfig = {
     password: process.env.password,
     port: process.env.port,
     database: process.env.database,
+    ssl: {
+        ca: caCertificate
+    }
 }
 
 const connection = mysql.createConnection(dbConfig);
