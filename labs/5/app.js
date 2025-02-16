@@ -18,7 +18,11 @@ const handleGet = (req, res) => {
 
   connection.query(sqlQuery, (err, results) => {
     if (err) {
-      handleError(res, 500, messageData.internalServerError);
+      handleError(
+        res,
+        500,
+        `${messageData.internalServerError}: ${err.message}`
+      );
       return;
     }
     res.writeHead(200, { "Content-Type": "application/json" });
@@ -47,7 +51,11 @@ const handlePost = (req, res) => {
 
     connection.query(query, (err, results) => {
       if (err) {
-        handleError(res, 500, messageData.internalServerError);
+        handleError(
+          res,
+          500,
+          `${messageData.internalServerError}: ${err.message}`
+        );
         return;
       }
       res.writeHead(200, { "Content-Type": "application/json" });
@@ -57,18 +65,18 @@ const handlePost = (req, res) => {
 };
 
 const handleDatabaseRequest = (req, res) => {
-    switch (req.method) {
-        case "GET":
-            handleGet(req, res);
-            return
-        case "POST":
-            handlePost(req, res);
-            return
-        default:
-            handleError(res, 405, messageData.methodNotAllowed);
-            return
-    }
-}
+  switch (req.method) {
+    case "GET":
+      handleGet(req, res);
+      return;
+    case "POST":
+      handlePost(req, res);
+      return;
+    default:
+      handleError(res, 405, messageData.methodNotAllowed);
+      return;
+  }
+};
 
 const handleError = (res, errorCode, errorMessage) => {
   res.writeHead(errorCode, { "Content-Type": "application/json" });
@@ -76,5 +84,5 @@ const handleError = (res, errorCode, errorMessage) => {
 };
 
 module.exports = {
-    handleDatabaseRequest
-}
+  handleDatabaseRequest,
+};
