@@ -56,7 +56,7 @@ const handlePost = (req, res) => {
   });
 };
 
-const handleRequest = (req, res) => {
+const handleDatabaseRequest = (req, res) => {
     switch (req.method) {
         case "GET":
             handleGet(req, res);
@@ -76,5 +76,5 @@ const handleError = (res, errorCode, errorMessage) => {
 };
 
 module.exports = {
-    handleRequest
+    handleDatabaseRequest
 }

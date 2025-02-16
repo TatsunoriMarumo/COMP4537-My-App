@@ -2,6 +2,7 @@ const http = require("http");
 const url = require("url");
 const { getDate, writeFile, readFile } = require("./labs/3/api");
 const { handleRequest } = require("./labs/4/app");
+const { handleDatabaseRequest } = require("./labs/5/app");
 const messageData = require("./lang/en/en.json");
 
 const PORT = process.env.PORT || 8888;
