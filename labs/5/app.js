@@ -42,7 +42,9 @@ const handlePost = (req, res) => {
       return;
     }
 
-    const query = body.trim();
+    const data = JSON.parse(body)
+
+    const query = data.query.trim();
 
     if (!query.toLowerCase().startsWith("insert")) {
       handleError(res, 403, messageData.onlyInsertAllowed);
