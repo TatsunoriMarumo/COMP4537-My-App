@@ -19,14 +19,20 @@ const dbConfig = {
     }
 }
 
-const connection = mysql.createConnection(dbConfig);
+const connection = mysql.createPool({
+    ...dbConfig,
+    connectionLimit: 10,
+    waitForConnections: true,
+    queueLimit: 0,
+});
 
-connection.connect(err => {
-    if (err) {
-        console.error("Failed to make connection to db.", err);
-        process.exit(1);
-    }
-    console.log("Successfully connected to db.")
+connection.getConnection((err, conn) => {
+  if (err) {
+    console.error("Failed to make connection to db.", err);
+    process.exit(1);
+  }
+  console.log("Successfully connected to db.");
+  conn.release();
 });
 
 module.exports = {

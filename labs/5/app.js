@@ -1,33 +1,28 @@
 const url = require("url");
-const { connection } = require("./db");
 const messageData = require("./lang/en/en.json");
+const { connection } = require("./db");
 
-const handleGet = (req, res) => {
-  const { query } = url.parse(req.url, true);
-  const sqlQuery = (query.query || "").trim();
+const handleGet = async (req, res) => {
+  try {
+    const parsedUrl = url.parse(req.url, true);
+    const sqlQuery = (parsedUrl.query.query || "").trim();
 
-  if (!sqlQuery) {
-    handleError(res, 400, messageData.errorMissingQuery);
-    return;
-  }
-
-  if (!sqlQuery.toLowerCase().startsWith("select")) {
-    handleError(res, 403, messageData.onlySelectAllowed);
-    return;
-  }
-
-  connection.query(sqlQuery, (err, results) => {
-    if (err) {
-      handleError(
-        res,
-        500,
-        `${messageData.internalServerError}: ${err.message}`
-      );
+    if (!sqlQuery) {
+      handleError(res, 400, messageData.errorMissingQuery);
       return;
     }
+
+    if (!sqlQuery.toLowerCase().startsWith("select")) {
+      handleError(res, 403, messageData.onlySelectAllowed);
+      return;
+    }
+
+    const [results, fields] = await connection.promise().query(sqlQuery);
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ results }));
-  });
+  } catch (err) {
+    handleError(res, 500, `${messageData.internalServerError}: ${err.message}`);
+  }
 };
 
 const handlePost = (req, res) => {
@@ -36,33 +31,31 @@ const handlePost = (req, res) => {
     body += chunk;
   });
 
-  req.on("end", () => {
-    if (!body) {
-      handleError(res, 400, messageData.errorMissingQuery);
-      return;
-    }
-
-    const data = JSON.parse(body)
-
-    const query = data.query.trim();
-
-    if (!query.toLowerCase().startsWith("insert")) {
-      handleError(res, 403, messageData.onlyInsertAllowed);
-      return;
-    }
-
-    connection.query(query, (err, results) => {
-      if (err) {
-        handleError(
-          res,
-          500,
-          `${messageData.internalServerError}: ${err.message}`
-        );
+  req.on("end", async () => {
+    try {
+      if (!body) {
+        handleError(res, 400, messageData.errorMissingQuery);
         return;
       }
+
+      const data = JSON.parse(body);
+      const query = data.query.trim();
+
+      if (!query.toLowerCase().startsWith("insert")) {
+        handleError(res, 403, messageData.onlyInsertAllowed);
+        return;
+      }
+
+      const [results, fields] = await connection.promise().query(query);
       res.writeHead(200, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ results }));
-    });
+    } catch (err) {
+      handleError(
+        res,
+        500,
+        `${messageData.internalServerError}: ${err.message}`
+      );
+    }
   });
 };
 
@@ -70,13 +63,13 @@ const handleDatabaseRequest = (req, res) => {
   switch (req.method) {
     case "GET":
       handleGet(req, res);
-      return;
+      break;
     case "POST":
       handlePost(req, res);
-      return;
+      break;
     default:
       handleError(res, 405, messageData.methodNotAllowed);
-      return;
+      break;
   }
 };
 
