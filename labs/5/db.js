@@ -35,6 +35,35 @@ connection.getConnection((err, conn) => {
   conn.release();
 });
 
+
+const adminConfig = {
+  host: process.env.host,
+  user: process.env.admin,
+  password: process.env.adminPass,
+  port: process.env.port,
+  database: process.env.database,
+  ssl: {
+    ca: caCertificate,
+  },
+};
+
+const admin = mysql.createPool({
+  ...adminConfig,
+  connectionLimit: 10,
+  waitForConnections: true,
+  queueLimit: 0,
+});
+
+admin.getConnection((err, conn) => {
+  if (err) {
+    console.error("Failed to make connection to db.", err);
+    process.exit(1);
+  }
+  console.log("Successfully connected to db.");
+  conn.release();
+});
+
 module.exports = {
-    connection
+    connection,
+    admin
 }
